@@ -4,12 +4,12 @@ namespace SigmaMock
 {
     public class ProxyMock<T> : DispatchProxy where T : class
     {
-        private static Dictionary<string, object> _returnValues = new();
+        private readonly static Dictionary<string, object> _returnValues = new();
 
         public T Create()
         {
-            var proxy = Create<T, ProxyMock<T>>() as ProxyMock<T>;
-            return proxy as T;
+            var proxy = Create<T, ProxyMock<T>>();
+            return proxy;
         }
 
         public ProxyMock<T> SetupReturnValue(string methodName, object returnValue)

@@ -1,10 +1,10 @@
 ﻿namespace ProxyTests.TestServices
 {
-    public class MainService
+    public class CheckService
     {
         private IProductService _productService;
 
-        public MainService(IProductService productService)
+        public CheckService(IProductService productService)
         {
             _productService = productService;
         }
