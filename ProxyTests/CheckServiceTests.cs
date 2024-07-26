@@ -6,12 +6,11 @@ namespace ProxyTests
     public class CheckServiceTests
     {
         [Fact]
-        public void ShouldValidProduct()
+        public async void ShouldValidProduct()
         {
             var product = new Product { Id = 22 };
-
             var mockProductService = new ProxyMock<IProductService>()
-                .SetupReturnValue(nameof(IProductService.GetProduct), product)
+                .SetupReturnValue(c => c.GetProduct(), product)
                 .Create();
 
             var checkService = new CheckService(mockProductService);

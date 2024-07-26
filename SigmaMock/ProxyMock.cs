@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace SigmaMock
 {
@@ -12,9 +13,18 @@ namespace SigmaMock
             return proxy;
         }
 
-        public ProxyMock<T> SetupReturnValue(string methodName, object returnValue)
+        public ProxyMock<T> SetupReturnValue(Expression<Func<T, object>> expression, object returnValue)
         {
-            _returnValues[methodName] = returnValue;
+            if (expression.Body is MethodCallExpression methodCall)
+            {
+                var methodName = methodCall.Method.Name;
+                _returnValues[methodName] = returnValue;
+            }
+            else
+            {
+                throw new ArgumentException("Expression is not a method call");
+            }
+
             return this;
         }
 
