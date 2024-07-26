@@ -9,13 +9,20 @@
             _productService = productService;
         }
 
-        public bool IsValidProduct()
+        public async Task<bool> IsValidProduct()
         {
             var product = _productService.GetProduct();
 
             if (product.Id > 0)
             {
-                return true;
+                product.IsValid = true;
+
+                var res = await _productService.SaveProduct(product);
+
+                if (res)
+                {
+                    return true;
+                }
             }
 
             return false;
