@@ -12,6 +12,7 @@
         public async Task<bool> IsValidProduct()
         {
             var product = _productService.GetProduct();
+            _ = _productService.GetProduct();
 
             if (product.Id > 0)
             {

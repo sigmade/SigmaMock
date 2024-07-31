@@ -9,8 +9,8 @@ namespace ProxyTests
         public async void ShouldValidProduct()
         {
             var product = new Product { Id = 22 };
-            var mockProductService = new ProxyMock<IProductService>()
-                .SetupMethod(c => c.GetProduct(), product, 1)
+            var mockProductService = new Mocker<IProductService>()
+                .SetupMethod(c => c.GetProduct(), product, 2)
                 .SetupMethod(c => c.SaveProduct(default), Task.FromResult(true), 1);
 
             var checkService = new CheckService(mockProductService.CreateInstance());
@@ -18,6 +18,7 @@ namespace ProxyTests
 
             var result = await checkService.IsValidProduct();
 
+            mockProductService.Verify();
             Assert.True(result);
         }
     }

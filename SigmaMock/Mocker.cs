@@ -3,17 +3,17 @@ using System.Reflection;
 
 namespace SigmaMock
 {
-    public class ProxyMock<T> : DispatchProxy where T : class
+    public class Mocker<T> : DispatchProxy where T : class
     {
         private readonly static List<MethodData> _methodDataList = new();
 
         public T CreateInstance()
         {
-            var proxy = Create<T, ProxyMock<T>>();
+            var proxy = Create<T, Mocker<T>>();
             return proxy;
         }
 
-        public ProxyMock<T> SetupMethod(Expression<Func<T, object>> expression, object? returnValue, int callNumber = 1)
+        public Mocker<T> SetupMethod(Expression<Func<T, object>> expression, object? returnValue, int callNumber = 1)
         {
             if (expression.Body is MethodCallExpression methodCall)
             {
@@ -27,7 +27,7 @@ namespace SigmaMock
                 _methodDataList.Add(new()
                 {
                     Name = methodCall.Method.Name,
-                    CallNumber = callNumber,
+                    CallNumberExpected = callNumber,
                     ReturnedValue = returnValue
                 });
             }
@@ -39,11 +39,30 @@ namespace SigmaMock
             return this;
         }
 
+        public void Verify()
+        {
+            foreach (var method in _methodDataList)
+            {
+                if (method.CallNumberExpected != method.CallNumberActual &&
+                    method.CallNumberExpected != -1)
+                {
+                    throw new Exception($"Method {method.Name} Actual {method.CallNumberActual}. Expected {method.CallNumberExpected}");
+                }
+            }
+        }
+
         protected override dynamic? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
-            var methodData = _methodDataList.Single(m => m.Name == targetMethod?.Name);
+            foreach (var method in _methodDataList)
+            {
+                if (method.Name == targetMethod?.Name)
+                {
+                    method.CallNumberActual++;
+                    return method.ReturnedValue;
+                }
+            }
 
-            return methodData.ReturnedValue;
+            return null;
         }
     }
 
@@ -51,6 +70,7 @@ namespace SigmaMock
     {
         public string Name { get; set; }
         public object? ReturnedValue { get; set; }
-        public int CallNumber { get; set; }
+        public int CallNumberExpected { get; set; }
+        public int CallNumberActual { get; set; }
     }
 }
