@@ -21,7 +21,12 @@
 
                 if (res)
                 {
-                    return true;
+                    if (product.Id > 0)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 }
             }
 

@@ -7,7 +7,7 @@ namespace SigmaMock
     {
         private readonly static List<MethodData> _methodDataList = new();
 
-        public T Create()
+        public T CreateInstance()
         {
             var proxy = Create<T, ProxyMock<T>>();
             return proxy;
@@ -17,6 +17,13 @@ namespace SigmaMock
         {
             if (expression.Body is MethodCallExpression methodCall)
             {
+                var currentRow = _methodDataList.FirstOrDefault(c => c.Name == methodCall.Method.Name);
+
+                if (currentRow != null)
+                {
+                    _methodDataList.Remove(currentRow);
+                }
+
                 _methodDataList.Add(new()
                 {
                     Name = methodCall.Method.Name,
@@ -44,7 +51,6 @@ namespace SigmaMock
     {
         public string Name { get; set; }
         public object? ReturnedValue { get; set; }
-        public Type TypeReturnedValue { get; set; }
         public int CallNumber { get; set; }
     }
 }
