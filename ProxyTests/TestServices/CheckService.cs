@@ -3,16 +3,22 @@
     public class CheckService
     {
         private IProductService _productService;
+        private ICustomLogger _customLogger;
 
-        public CheckService(IProductService productService)
+        public CheckService(
+            IProductService productService,
+            ICustomLogger customLogger)
         {
             _productService = productService;
+            _customLogger = customLogger;
         }
 
         public async Task<bool> IsValidProduct()
         {
             var product = _productService.GetProduct();
             _ = _productService.GetProduct();
+
+            _customLogger.Log();
 
             if (product.Id > 0)
             {

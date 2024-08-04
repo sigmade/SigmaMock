@@ -39,6 +39,32 @@ namespace SigmaMock
             return this;
         }
 
+        public Mocker<T> SetupMethod(Expression<Action<T>> expression, int callNumber = 1)
+        {
+            if (expression.Body is MethodCallExpression methodCall)
+            {
+                var currentRow = _methodDataList.FirstOrDefault(c => c.Name == methodCall.Method.Name);
+
+                if (currentRow != null)
+                {
+                    _methodDataList.Remove(currentRow);
+                }
+
+                _methodDataList.Add(new()
+                {
+                    Name = methodCall.Method.Name,
+                    CallNumberExpected = callNumber,
+                    ReturnedValue = null
+                });
+            }
+            else
+            {
+                throw new ArgumentException("Expression is not a method call");
+            }
+
+            return this;
+        }
+
         public void Verify()
         {
             foreach (var method in _methodDataList)
