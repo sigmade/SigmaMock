@@ -13,7 +13,7 @@ namespace SigmaMock
             return proxy;
         }
 
-        protected override dynamic? Invoke(MethodInfo? targetMethod, object?[]? args)
+        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
         {
             foreach (var method in _methodDataList)
             {
