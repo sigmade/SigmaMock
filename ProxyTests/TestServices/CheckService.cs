@@ -1,21 +1,34 @@
 ﻿namespace ProxyTests.TestServices
 {
-    public class CheckService
+    public class CheckService(
+        IProductService productService,
+        ICustomLogger customLogger)
     {
-        private IProductService _productService;
+        private readonly IProductService _productService = productService;
+        private readonly ICustomLogger _customLogger = customLogger;
 
-        public CheckService(IProductService productService)
-        {
-            _productService = productService;
-        }
-
-        public bool IsValidProduct()
+        public async Task<bool> IsValidProduct()
         {
             var product = _productService.GetProduct();
+            _ = _productService.GetProduct();
+
+            _customLogger.Log();
 
             if (product.Id > 0)
             {
-                return true;
+                product.IsValid = true;
+
+                var res = await _productService.SaveProduct(product);
+
+                if (res)
+                {
+                    if (product.Id > 0)
+                    {
+                        return true;
+                    }
+
+                    return false;
+                }
             }
 
             return false;
