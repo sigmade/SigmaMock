@@ -5,7 +5,7 @@ namespace SigmaMock
 {
     public class Mocker<T> : DispatchProxy where T : class
     {
-        private readonly static List<MethodData> _methodDataList = new();
+        private readonly static List<MethodData> _methodDataList = [];
 
         public T Implement()
         {
@@ -96,7 +96,7 @@ namespace SigmaMock
 
     public class MethodData
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
         public object? ReturnedValue { get; set; }
         public int CallNumberExpected { get; set; }
         public int CallNumberActual { get; set; }

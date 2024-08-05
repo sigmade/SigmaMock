@@ -1,17 +1,11 @@
 ﻿namespace ProxyTests.TestServices
 {
-    public class CheckService
+    public class CheckService(
+        IProductService productService,
+        ICustomLogger customLogger)
     {
-        private IProductService _productService;
-        private ICustomLogger _customLogger;
-
-        public CheckService(
-            IProductService productService,
-            ICustomLogger customLogger)
-        {
-            _productService = productService;
-            _customLogger = customLogger;
-        }
+        private readonly IProductService _productService = productService;
+        private readonly ICustomLogger _customLogger = customLogger;
 
         public async Task<bool> IsValidProduct()
         {
