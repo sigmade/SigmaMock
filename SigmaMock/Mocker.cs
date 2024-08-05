@@ -7,10 +7,24 @@ namespace SigmaMock
     {
         private readonly static List<MethodData> _methodDataList = new();
 
-        public T CreateInstance()
+        public T Implement()
         {
             var proxy = Create<T, Mocker<T>>();
             return proxy;
+        }
+
+        protected override dynamic? Invoke(MethodInfo? targetMethod, object?[]? args)
+        {
+            foreach (var method in _methodDataList)
+            {
+                if (method.Name == targetMethod?.Name)
+                {
+                    method.CallNumberActual++;
+                    return method.ReturnedValue;
+                }
+            }
+
+            return null;
         }
 
         public Mocker<T> SetupMethod(Expression<Func<T, object>> expression, object? returnValue, int callNumber = 1)
@@ -65,7 +79,7 @@ namespace SigmaMock
             return this;
         }
 
-        public void Verify()
+        public void CheckMethodCalls()
         {
             foreach (var method in _methodDataList)
             {
@@ -77,19 +91,7 @@ namespace SigmaMock
             }
         }
 
-        protected override dynamic? Invoke(MethodInfo? targetMethod, object?[]? args)
-        {
-            foreach (var method in _methodDataList)
-            {
-                if (method.Name == targetMethod?.Name)
-                {
-                    method.CallNumberActual++;
-                    return method.ReturnedValue;
-                }
-            }
 
-            return null;
-        }
     }
 
     public class MethodData
